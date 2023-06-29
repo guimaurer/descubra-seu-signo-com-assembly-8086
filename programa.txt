@@ -1,0 +1,340 @@
+section .data
+
+msg_init               db '----- Seja bem-vindo(a) 😉 ----', 10
+tam_msg_init           equ $ - msg_init
+
+msg_um                 db '🔶 Digite o dia de nascimento (DD): ', 10
+tam_msg_um             equ $ - msg_um
+
+msg_dois               db '🔷 Digite o mês de nascimento (MM): ', 10
+tam_msg_dois           equ $ - msg_dois
+
+msg_dia_erro           db 'Dia inválido', 10
+tam_dia_erro           equ $ - msg_dia_erro
+
+msg_mes_erro           db 'Mês inválido', 10
+tam_mes_erro           equ $ - msg_mes_erro
+
+msg_tres               db 'Resposta: ', 10
+tam_msg_tres           equ $ - msg_tres
+
+resposta_aquario       db 'Seu signo é Aquário ♒', 10
+tam_resposta_aquario   equ $ - resposta_aquario
+
+resposta_peixes        db 'Seu signo é Peixes ♓', 10
+tam_resposta_peixes    equ $ - resposta_peixes
+
+resposta_aries         db 'Seu signo é Áries ♈', 10
+tam_resposta_aries     equ $ - resposta_aries
+
+resposta_touro         db 'Seu signo é Touro ♉', 10
+tam_resposta_touro     equ $ - resposta_touro
+
+resposta_gemeos        db 'Seu signo é Gêmeos ♊', 10
+tam_resposta_gemeos    equ $ - resposta_gemeos
+
+resposta_cancer        db 'Seu signo é Câncer ♋', 10
+tam_resposta_cancer    equ $ - resposta_cancer
+
+resposta_leao          db 'Seu signo é Leão ♌', 10
+tam_resposta_leao      equ $ - resposta_leao
+
+resposta_virgem        db 'Seu signo é Virgem ♍', 10
+tam_resposta_virgem    equ $ - resposta_virgem
+
+resposta_libra         db 'Seu signo é Libra ♎', 10
+tam_resposta_libra     equ $ - resposta_libra
+
+resposta_escorpiao     db 'Seu signo é Escorpião ♏', 10
+tam_resposta_escorpiao equ $ - resposta_escorpiao
+
+resposta_sagitario     db 'Seu signo é Sagitário ♐', 10
+tam_resposta_sagitario equ $ - resposta_sagitario
+
+resposta_capricornio   db 'Seu signo é Capricórnio ♑', 10
+tam_resposta_capricornio equ $ - resposta_capricornio
+
+section .bss
+valor_um_dia           resb 3
+valor_dois_mes         resb 3
+
+section .text
+global _start
+_start:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, msg_init
+  mov edx, tam_msg_init
+  int 0x80
+
+pergunta_dia:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, msg_um
+  mov edx, tam_msg_um
+  int 0x80
+
+  mov eax, 3
+  mov ebx, 0
+  mov ecx, valor_um_dia
+  mov edx, 3
+  int 0x80
+
+  mov al, byte[valor_um_dia + 0]
+  sub al, 0x30
+  mov ah, 10
+  mul ah
+
+  mov bl, byte[valor_um_dia + 1]
+  sub bl, 0x30
+  add ax, bx
+  mov dx, ax
+  PUSH dx
+  
+  cmp dx, 1
+  jl erro_dia
+  cmp dx, 31
+  jg erro_dia
+
+pergunta_mes:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, msg_dois
+  mov edx, tam_msg_dois
+  int 0x80
+
+  mov eax, 3
+  mov ebx, 0
+  mov ecx, valor_dois_mes
+  mov edx, 3
+  int 0x80
+
+  mov al, byte[valor_dois_mes + 0]
+  sub al, 0x30
+  mov ah, 10
+  mul ah
+
+  mov bl, byte[valor_dois_mes + 1]
+  sub bl, 0x30
+  add ax, bx
+  mov bx, ax
+
+  cmp bx, 1
+  jl erro_mes
+  cmp bx, 12
+  jg erro_mes
+
+
+    POP DX 
+
+  cmp bx, 1
+  je jan
+  cmp bx, 2
+  je fev
+  cmp bx, 3
+  je mar
+  cmp bx, 4
+  je abr
+  cmp bx, 5
+  je mai
+  cmp bx, 6
+  je jun
+  cmp bx, 7
+  je jul
+  cmp bx, 8
+  je ago
+  cmp bx, 9
+  je set
+  cmp bx, 10
+  je outu
+  cmp bx, 11
+  je nov
+  cmp bx, 12
+  je dez
+
+jan:
+  cmp dx, 21
+  jae aquario
+  jmp capricornio
+
+fev:
+  cmp dx, 28
+  jg erro_dia 
+  cmp dx, 20
+  jae peixes
+  jmp aquario
+
+mar:
+  cmp dx, 20
+  jae aries
+  jmp peixes
+
+abr:
+  cmp dx, 30
+  jg erro_dia
+  cmp dx, 20
+  jae touro
+  jmp aries
+
+mai:
+  cmp dx, 21
+  jae gemeos
+  jmp touro
+
+jun:
+  cmp dx, 30
+  jg erro_dia
+  cmp dx, 21
+  jae cancer
+  jmp gemeos
+
+jul:
+  cmp dx, 22
+  jae leao
+  jmp cancer
+
+ago:
+  cmp dx, 23
+  jae virgem
+  jmp leao
+
+set:
+  cmp dx, 30
+  jg erro_dia
+  cmp dx, 22
+  jae libra
+  jmp virgem
+
+outu:
+  cmp dx, 23
+  jae escorpiao
+  jmp libra
+
+nov:
+  cmp dx, 30
+  jg erro_dia
+  cmp dx, 22
+  jae sagitario
+  jmp escorpiao
+
+dez:
+  cmp dx, 22
+  jae capricornio
+  jmp sagitario
+
+aquario:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_aquario
+  mov edx, tam_resposta_aquario
+  int 0x80
+  jmp fim
+
+peixes:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_peixes
+  mov edx, tam_resposta_peixes
+  int 0x80
+  jmp fim
+
+aries:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_aries
+  mov edx, tam_resposta_aries
+  int 0x80
+  jmp fim
+
+touro:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_touro
+  mov edx, tam_resposta_touro
+  int 0x80
+  jmp fim
+
+gemeos:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_gemeos
+  mov edx, tam_resposta_gemeos
+  int 0x80
+  jmp fim
+
+cancer:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_cancer
+  mov edx, tam_resposta_cancer
+  int 0x80
+  jmp fim
+
+leao:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_leao
+  mov edx, tam_resposta_leao
+  int 0x80
+  jmp fim
+
+virgem:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_virgem
+  mov edx, tam_resposta_virgem
+  int 0x80
+  jmp fim
+
+libra:
+
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_libra
+  mov edx, tam_resposta_libra
+  int 0x80
+  jmp fim
+
+escorpiao:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_escorpiao
+  mov edx, tam_resposta_escorpiao
+  int 0x80
+  jmp fim
+
+sagitario:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_sagitario
+  mov edx, tam_resposta_sagitario
+  int 0x80
+  jmp fim
+
+capricornio:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, resposta_capricornio
+  mov edx, tam_resposta_capricornio
+  int 0x80
+
+fim:
+  mov eax, 1
+  xor ebx, ebx
+  int 0x80
+
+erro_dia:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, msg_dia_erro
+  mov edx, tam_dia_erro
+  int 0x80
+  jmp _start
+
+erro_mes:
+  mov eax, 4
+  mov ebx, 1
+  mov ecx, msg_mes_erro
+  mov edx, tam_mes_erro
+  int 0x80
+  jmp _start
